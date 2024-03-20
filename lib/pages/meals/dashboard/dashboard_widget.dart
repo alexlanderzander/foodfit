@@ -1,3 +1,5 @@
+import 'package:camera/camera.dart';
+
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/components/empty_state/empty_state_widget.dart';
@@ -25,10 +27,17 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   late DashboardModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  late final List<CameraDescription> _cameras;
+  CameraController? controller;
 
   @override
   void initState() {
     super.initState();
+    availableCameras().then((value){
+      _cameras = value;
+      controller = CameraController(_cameras[0], ResolutionPreset.medium);
+      controller!.initialize().then((_) => setState((){}));
+    });
     _model = createModel(context, () => DashboardModel());
 
     logFirebaseEvent('screen_view', parameters: {'screen_name': 'Dashboard'});
@@ -44,8 +53,8 @@ class _DashboardWidgetState extends State<DashboardWidget> {
 
   @override
   void dispose() {
+    controller?.dispose();
     _model.dispose();
-
     super.dispose();
   }
 
@@ -89,7 +98,10 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                   ],
                 ),
               ),
-              Expanded(
+              controller == null ? SizedBox.shrink() : Expanded(child: CameraPreview(
+                controller!
+              )),
+              /*Expanded(
                 child: Padding(
                   padding: EdgeInsets.all(14.0),
                   child: AuthUserStreamWidget(
@@ -149,7 +161,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                     ),
                   ),
                 ),
-              ),
+              ),*/
             ],
           ),
         ),

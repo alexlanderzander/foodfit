@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "864412004526",
+    "project_id": "foodfit-qxo0cp",
+    "storage_bucket": "foodfit-qxo0cp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:864412004526:android:95e7e805501c0a3960bd3f",
+        "android_client_info": {
+          "package_name": "com.mealplanner.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfFGWT5gAqhVUcFf0zfmY5_XtK7EDG_5o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

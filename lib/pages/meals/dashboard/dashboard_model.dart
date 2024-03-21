@@ -16,18 +16,18 @@ import 'package:provider/provider.dart';
 class DashboardModel extends FlutterFlowModel<DashboardWidget> {
   ///  State fields for stateful widgets in this page.
 
-  final unfocusNode = FocusNode();
-
+  Uint8List? pickedImage;
   /// Initialization and disposal methods.
 
   @override
   void initState(BuildContext context) {}
 
   @override
-  void dispose() {
-    unfocusNode.dispose();
-  }
+  void dispose() {}
 
+  void setImage(Uint8List bytes){
+    pickedImage = bytes;
+  }
   /// Action blocks are added here.
 
   /// Additional helper methods are added here.

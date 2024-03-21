@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 
+import '../../../backend/schema/food_nutrition.dart';
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/components/empty_state/empty_state_widget.dart';
@@ -72,7 +73,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(16.0, 32.0, 16.0, 16.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(16.0, 32.0, 16.0, 16.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -87,7 +88,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                     ),
                     Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 6.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 6.0, 0.0, 0.0),
                       child: Text(
                         'Get estimated nutritions content from image',
                         style: FlutterFlowTheme.of(context).labelLarge,
@@ -96,12 +97,12 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                   ],
                 ),
               ),
-              controller == null ? SizedBox.shrink() : Expanded(child: CameraPreview(
+              controller == null ? const SizedBox.shrink() : Expanded(child: CameraPreview(
                 controller!
               )),
               Padding(
                 padding:
-                EdgeInsetsDirectional.fromSTEB(0.0, 0, 0.0, 0.0),
+                const EdgeInsetsDirectional.fromSTEB(0.0, 0, 0.0, 0.0),
                 child: FFButtonWidget(
                   onPressed: () async {
                     final photo = await controller!.takePicture();
@@ -109,16 +110,19 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                     setState((){
                       _model.setImage(bytes);
                     });
-                    _showMealConfirmation();
+                    final nutritions = await _showMealConfirmation();
+                    if(nutritions == null) return;
+                    await addMealToHistory(photo.path,nutritions);
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Added")));
                   },
                   text: 'Make photo',
                   options: FFButtonOptions(
                     width: double.infinity,
                     height: 50.0,
                     padding:
-                    EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                    const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                     iconPadding:
-                    EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                    const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                     color: FlutterFlowTheme.of(context).primary,
                     textStyle:
                     FlutterFlowTheme.of(context).bodyMedium.override(
@@ -128,7 +132,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                       fontWeight: FontWeight.w600,
                     ),
                     elevation: 0.0,
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Colors.transparent,
                       width: 1.0,
                     ),
@@ -205,14 +209,14 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   }
 
   final _nutritions = [
-    FoodNutrition(name: 'Calories', amount: 254, quantityPrefix: 'mg'),
-    FoodNutrition(name: 'Fat', amount: 24, quantityPrefix: 'g'),
-    FoodNutrition(name: 'Protein', amount: 3, quantityPrefix: 'mg'),
-    FoodNutrition(name: 'Vitamin D', amount: 2, quantityPrefix: 'mg'),
+    const FoodNutrition(name: 'Calories', amount: 254, quantityPrefix: 'mg'),
+    const FoodNutrition(name: 'Fat', amount: 24, quantityPrefix: 'g'),
+    const FoodNutrition(name: 'Protein', amount: 3, quantityPrefix: 'mg'),
+    const FoodNutrition(name: 'Vitamin D', amount: 2, quantityPrefix: 'mg'),
   ];
 
-  Future<void> _showMealConfirmation(){
-    if(_model.pickedImage == null) return Future.value();
+  Future<List<FoodNutrition>?> _showMealConfirmation() async{
+    if(_model.pickedImage == null) return null;
     return showModalBottomSheet(context: context, builder: (context){
       return Container(
         height: 450,
@@ -233,11 +237,11 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                 child: Column(
                   children: _nutritions.map((e) => Row(
                     children: [
-                      Text(e.name, style: TextStyle(
+                      Text(e.name, style: const TextStyle(
                           fontFamily: 'Urbanist', fontWeight: FontWeight.w600, fontSize: 16
                       ),),
-                      Spacer(),
-                      Text(e.amount.toStringAsFixed(2) + "" + e.quantityPrefix, style: TextStyle(fontSize: 16, fontFamily: 'Manrope'),)
+                      const Spacer(),
+                      Text(e.amount.toStringAsFixed(2) + "" + e.quantityPrefix, style: const TextStyle(fontSize: 16, fontFamily: 'Manrope'),)
                     ],
                   )).toList().paddingTopEach(5),
                 ),
@@ -248,19 +252,19 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                 Expanded(
                   child: Padding(
                     padding:
-                    EdgeInsetsDirectional.fromSTEB(0.0, 0, 0.0, 0.0),
+                    const EdgeInsetsDirectional.fromSTEB(0.0, 0, 0.0, 0.0),
                     child: FFButtonWidget(
                       onPressed: () async {
-                        Navigator.of(context).pop();
+                        Navigator.of(context).pop(null);
                       },
                       text: 'Deny',
                       options: FFButtonOptions(
                           width: double.infinity,
                           height: 50.0,
                           padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                           iconPadding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                           color: FlutterFlowTheme.of(context).error,
                           textStyle:
                           FlutterFlowTheme.of(context).bodyMedium.override(
@@ -270,7 +274,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                             fontWeight: FontWeight.w600,
                           ),
                           elevation: 0.0,
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Colors.transparent,
                             width: 1.0,
                           ),
@@ -282,19 +286,19 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                 Expanded(
                   child: Padding(
                     padding:
-                    EdgeInsetsDirectional.fromSTEB(0.0, 0, 0.0, 0.0),
+                    const EdgeInsetsDirectional.fromSTEB(0.0, 0, 0.0, 0.0),
                     child: FFButtonWidget(
                       onPressed: () async {
-
+                        Navigator.of(context).pop(_nutritions);
                       },
                       text: 'Eat',
                       options: FFButtonOptions(
                           width: double.infinity,
                           height: 50.0,
                           padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                           iconPadding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                          const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                           color: FlutterFlowTheme.of(context).primary,
                           textStyle:
                           FlutterFlowTheme.of(context).bodyMedium.override(
@@ -304,7 +308,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                             fontWeight: FontWeight.w600,
                           ),
                           elevation: 0.0,
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Colors.transparent,
                             width: 1.0,
                           ),
@@ -320,17 +324,4 @@ class _DashboardWidgetState extends State<DashboardWidget> {
       );
     });
   }
-}
-
-class FoodNutrition{
-  final String name;
-  final double amount;
-  final String quantityPrefix;
-
-  const FoodNutrition({
-    required this.name,
-    required this.amount,
-    this.quantityPrefix = '',
-  });
-
 }

@@ -17,6 +17,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.24"
+  adaptive_action_sheet:
+    dependency: "direct main"
+    description:
+      name: adaptive_action_sheet
+      sha256: "35190411e7136a3c244d58accdf254ac7158eac38e57a62d85b0477a7988f1c5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.3"
   analyzer:
     dependency: transitive
     description:
@@ -57,6 +65,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
+  barcode:
+    dependency: transitive
+    description:
+      name: barcode
+      sha256: "91b143666f7bb13636f716b6d4e412e372ab15ff7969799af8c9e30a382e9385"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.6"
+  bidi:
+    dependency: transitive
+    description:
+      name: bidi
+      sha256: "1a7d0c696324b2089f72e7671fd1f1f64fef44c980f3cebc84e803967c597b63"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.10"
   boolean_selector:
     dependency: transitive
     description:
@@ -137,6 +161,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.0"
+  chatgpt_completions:
+    dependency: "direct main"
+    description:
+      name: chatgpt_completions
+      sha256: a3760d41aabfbf0a69f9e34d6e4c20c439ed54edf9123e61838a0f01ba3644f4
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   checked_yaml:
     dependency: transitive
     description:
@@ -225,6 +257,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.6"
+  dio:
+    dependency: "direct main"
+    description:
+      name: dio
+      sha256: "49af28382aefc53562459104f64d16b9dfd1e8ef68c862d5af436cc8356ce5a8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.4.1"
   easy_debounce:
     dependency: "direct main"
     description:
@@ -353,6 +393,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.4+24"
+  firebase_storage:
+    dependency: "direct main"
+    description:
+      name: firebase_storage
+      sha256: "8e93e9462f353946c471d5ab6f2eeedcb163fdecb5a8c44b152d962ee9093d40"
+      url: "https://pub.dev"
+    source: hosted
+    version: "11.6.8"
+  firebase_storage_platform_interface:
+    dependency: transitive
+    description:
+      name: firebase_storage_platform_interface
+      sha256: ca9dbfc61c91c2d918004f8d1eb214171f941c789c1216e94eedbe45c8d29a21
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.1.11"
+  firebase_storage_web:
+    dependency: transitive
+    description:
+      name: firebase_storage_web
+      sha256: "076c336dee318fe32be5bec4eac9682aaf39bd224040113768c74b601650546c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.7.2"
   fixnum:
     dependency: transitive
     description:
@@ -669,6 +733,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  open_file_plus:
+    dependency: "direct main"
+    description:
+      name: open_file_plus
+      sha256: f087e32722ffe4bac71925e7a1a9848a1008fd789e47c6628da3ed7845922227
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.4.1"
   package_config:
     dependency: transitive
     description:
@@ -693,6 +765,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.8.3"
+  path_parsing:
+    dependency: transitive
+    description:
+      name: path_parsing
+      sha256: e3e67b1629e6f7e8100b367d3db6ba6af4b1f0bb80f64db18ef1fbabd2fa9ccf
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   path_provider:
     dependency: "direct main"
     description:
@@ -741,6 +821,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.7"
+  pdf:
+    dependency: "direct main"
+    description:
+      name: pdf
+      sha256: "243f05342fc0bdf140eba5b069398985cdbdd3dbb1d776cf43d5ea29cc570ba6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.10.8"
   petitparser:
     dependency: transitive
     description:
@@ -797,6 +885,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
+  qr:
+    dependency: transitive
+    description:
+      name: qr
+      sha256: "64957a3930367bf97cc211a5af99551d630f2f4625e38af10edd6b19131b64b3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.1"
   quiver:
     dependency: transitive
     description:
@@ -1034,6 +1130,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.2"
+  universal_io:
+    dependency: transitive
+    description:
+      name: universal_io
+      sha256: "1722b2dcc462b4b2f3ee7d188dad008b6eb4c40bbd03a3de451d82c78bba9aad"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.2"
   url_launcher:
     dependency: "direct main"
     description:

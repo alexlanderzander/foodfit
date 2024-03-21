@@ -1,3 +1,4 @@
+import 'package:foodfit/pages/meals/history/history_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -137,6 +138,7 @@ class _NavBarPageState extends State<NavBarPage> {
   Widget build(BuildContext context) {
     final tabs = {
       'Dashboard': DashboardWidget(),
+      'History': HistoryWidget(),
       'Profile': ProfileWidget(),
     };
     final currentIndex = tabs.keys.toList().indexOf(_currentPageName);
@@ -158,10 +160,18 @@ class _NavBarPageState extends State<NavBarPage> {
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(
+              Icons.camera,
+              size: 24.0,
+            ),
+            label: 'Camera',
+            tooltip: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
               Icons.restaurant_sharp,
               size: 24.0,
             ),
-            label: 'Meals',
+            label: 'History',
             tooltip: '',
           ),
           BottomNavigationBarItem(

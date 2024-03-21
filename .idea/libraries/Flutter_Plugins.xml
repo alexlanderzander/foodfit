@@ -43,6 +43,9 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_android-2.2.1" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_auth_web-5.9.7" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/camera_android-0.10.8+17" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_storage_web-3.7.2" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_storage-11.6.8" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/open_file_plus-3.4.1" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

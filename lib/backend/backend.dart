@@ -1,6 +1,17 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:chatgpt_completions/chatgpt_completions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:foodfit/backend/schema/food.dart';
+import 'package:foodfit/backend/schema/food_nutrition.dart';
+import 'package:open_file_plus/open_file_plus.dart';
+import 'package:path_provider/path_provider.dart';
 import '../auth/firebase_auth/auth_util.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 import '../flutter_flow/flutter_flow_util.dart';
 import 'schema/util/firestore_util.dart';
@@ -85,6 +96,13 @@ Stream<List<MealsRecord>> queryMealsRecord({
       limit: limit,
       singleRecord: singleRecord,
     );
+
+Stream<List<Food>> queryFoodRecord({
+  required String userId,
+}){
+  final snaps = FirebaseFirestore.instance.collection('users').doc(userId).collection('meals').orderBy('createdAt', descending: true).snapshots();
+  return snaps.map((event) => event.docs.map((doc) => Food.fromMap(doc.data())).toList());
+}
 
 Future<List<MealsRecord>> queryMealsRecordOnce({
   Query Function(Query)? queryBuilder,
@@ -400,4 +418,123 @@ Future maybeCreateUser(User user) async {
 Future updateUserDocument({String? email}) async {
   await currentUserDocument?.reference
       .update(createUsersRecordData(email: email));
+}
+
+Future addMealToHistory(String path,List<FoodNutrition> nutritions) async{
+  final doc = currentUserDocument!.reference.collection('meals').doc();
+  String extension = path.split(".").last;
+  print("started");
+  final task = await FirebaseStorage.instance.ref("users/${currentUserUid}/meals/${doc.id}.${extension}").putFile(File(path));
+  print("end");
+  final url = await task.ref.getDownloadURL();
+  return doc.set({'id': doc.id, 'nutritions': nutritions.map((e) => e.toMap()).toList(), 'photoUrl': url, 'createdAt': FieldValue.serverTimestamp()});
+}
+
+Future generateDailyReport() async{
+  print("send");
+  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+  final String userId = currentUserUid; // Your user id here
+  final DateTime now = DateTime.now();
+  Map<String, dynamic> totalNutritions = {};
+
+  final QuerySnapshot result = await _firebaseFirestore
+      .collection('users')
+      .doc(userId)
+      .collection('meals')
+      .get();
+
+
+
+  result.docs.forEach((res){
+    ((res.data() as Map<String,dynamic>)['nutritions'] as List<dynamic>).forEach((nutrition) {
+      if(totalNutritions.containsKey(nutrition['name'])){
+        totalNutritions[nutrition['name']] += nutrition['amount'];
+      } else {
+        totalNutritions[nutrition['name']] = nutrition['amount'];
+      }
+    });
+  });
+
+  final message =
+      'You are analyzing a person nutrition daily content based on person age, weight, aims and etc... Analyze the person daily nutritions based on what i provide and make it as conclusion written by doctor. Weight: ${currentUserDocument!.weight}, Age: ${currentUserDocument!.age}, Gender: ${currentUserDocument!.gender}, Activity level: ${currentUserDocument!.activityLevel}, Body goals: ${currentUserDocument!.bodyGoals}\n Nutritions for today: ${totalNutritions.toString()}\n Note one important thing: make it like a description on paper, no introduction, nothing chatgpt-like';
+
+
+  const String apiKey = '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';
+  const String endpoint = 'https://api.openai.com/v1/chat/completions';
+
+
+  final dio = Dio();
+  final response = await dio.post(
+    endpoint,
+    data: {
+      "model": "gpt-3.5-turbo",
+      "messages": [{"role": "user", "content": message}],
+      "temperature": 0.7
+    },
+    options: Options(
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $apiKey',
+      },
+    ),
+  );
+  final conclusion = (response.data as Map<String,dynamic>)["choices"][0]["message"]["content"];
+  print(conclusion);
+
+  final pdf = pw.Document();
+  var data = <pw.TableRow>[
+    pw.TableRow(
+      children: [
+        pw.Text('Nutrition Name', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+        pw.Text('Total Amount', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+      ],
+    ),
+  ];
+  for (final meal in totalNutritions.entries) {
+    data.add(
+      pw.TableRow(children: [
+        pw.Text(meal.key),
+        pw.Text(meal.value.toStringAsFixed(2)),
+      ]),
+    );
+  }
+
+  pdf.addPage(
+    pw.MultiPage(
+        build: (context) {
+          return [
+            pw.Text('Daily nutrition report (${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day})', style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold)),
+            pw.Container(height: 10),
+          pw.Table(children: data),
+            pw.Container(height: 10),
+            pw.Text('Conclusion:', style: pw.TextStyle(fontSize: 18)),
+            pw.Text(conclusion.toString()),
+        ];
+        }
+    ),
+  );
+
+  final output = await getTemporaryDirectory();
+  final file = File("${output.path}/report.pdf");
+  await file.writeAsBytes(await pdf.save());
+
+  await Dio(BaseOptions(headers: {
+    "accept": "application/json",
+    "api-key": "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",
+    "content-type": "application/json"
+  })).post("https://api.brevo.com/v3/smtp/email", data: {
+    "sender": {
+      "name": "Nutrition app",
+      "email": "pandatechnologydev@gmail.com"
+    },
+    "to": [
+      {
+        "email": currentUserEmail,
+        "name": currentUserDisplayName
+      }
+    ],
+    "subject": "Daily nutritions report",
+    "textContent": "Your daily nutritions report",
+    "attachment": [{"content": base64Encode(file.readAsBytesSync()), "name": "daily_report.pdf"}]
+  });
 }

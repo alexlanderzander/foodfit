@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:foodfit/pages/meals/history/history_widget.dart';
 import 'package:go_router/go_router.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -116,6 +117,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
                   ? NavBarPage(initialPage: 'Dashboard')
                   : DashboardWidget(),
             ),
+            FFRoute(name: 'History', path: 'history', builder: (context, params) => HistoryWidget()),
             FFRoute(
               name: 'MealDetails',
               path: 'meal/:mealRef',

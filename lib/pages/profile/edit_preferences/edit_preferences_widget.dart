@@ -44,7 +44,7 @@ class _EditPreferencesWidgetState extends State<EditPreferencesWidget> {
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       logFirebaseEvent('EDIT_PREFERENCES_EditPreferences_ON_INIT');
       logFirebaseEvent('EditPreferences_update_page_state');
-      setState(() {
+      /*setState(() {
         _model.allergenSelection =
             (currentUserDocument?.allergens?.toList() ?? [])
                 .toList()
@@ -54,7 +54,7 @@ class _EditPreferencesWidgetState extends State<EditPreferencesWidget> {
             (currentUserDocument?.ingredientDislikes?.toList() ?? [])
                 .toList()
                 .cast<String>();
-      });
+      });*/
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
@@ -429,7 +429,7 @@ class _EditPreferencesWidgetState extends State<EditPreferencesWidget> {
                         HapticFeedback.lightImpact();
                         logFirebaseEvent('Button_backend_call');
 
-                        await currentUserReference!.update({
+                        /*await currentUserReference!.update({
                           ...createUsersRecordData(
                             diet: _model.dietSelection,
                           ),
@@ -439,7 +439,7 @@ class _EditPreferencesWidgetState extends State<EditPreferencesWidget> {
                               'ingredient_dislikes': _model.ingredientSelection,
                             },
                           ),
-                        });
+                        });*/
                         logFirebaseEvent('Button_navigate_back');
                         context.pop();
                       },

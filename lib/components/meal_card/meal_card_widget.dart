@@ -279,7 +279,7 @@ class _MealCardWidgetState extends State<MealCardWidget>
                         alignment: AlignmentDirectional(0.0, 0.0),
                         child: AuthUserStreamWidget(
                           builder: (context) => Text(
-                            valueOrDefault(currentUserDocument?.diet, ''),
+                            valueOrDefault('',''),
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(

@@ -364,23 +364,16 @@ class _OnboardingCreateAccountWidgetState
                           return;
                         }
 
-                        await UsersRecord.collection.doc(user.uid).update({
-                          ...createUsersRecordData(
-                            displayName: _model.fullNameController.text,
-                            diet: FFAppState().userDiet,
-                          ),
-                          ...mapToFirestore(
-                            {
-                              'allergens': FFAppState().userAllergens,
-                              'ingredient_dislikes':
-                                  FFAppState().userIngredientDislikes,
-                            },
-                          ),
-                        });
+                        await UsersRecord.collection.doc(user.uid).update(createUsersRecordData(
+                          displayName: _model.fullNameController.text,
+                        ));
 
                         logFirebaseEvent('Button_navigate_to');
-
-                        context.goNamedAuth('Dashboard', context.mounted);
+                        if(!currentUserDocument!.hasAge()){
+                          context.goNamedAuth('Onboarding', context.mounted);
+                        }else{
+                          context.goNamedAuth('Dashboard', context.mounted);
+                        }
                       },
                       text: 'Create Account',
                       options: FFButtonOptions(

@@ -390,7 +390,6 @@ Future maybeCreateUser(User user) async {
         user.displayName ?? FirebaseAuth.instance.currentUser?.displayName,
     photoUrl: user.photoURL,
     uid: user.uid,
-    phoneNumber: user.phoneNumber,
     createdTime: getCurrentTimestamp,
   );
 

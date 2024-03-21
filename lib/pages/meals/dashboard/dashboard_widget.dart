@@ -61,9 +61,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _model.unfocusNode.canRequestFocus
-          ? FocusScope.of(context).requestFocus(_model.unfocusNode)
-          : FocusScope.of(context).unfocus(),
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
@@ -81,7 +79,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'This week\'s meals',
+                      'Photo your meal',
                       style: FlutterFlowTheme.of(context).displaySmall.override(
                             fontFamily: 'Urbanist',
                             fontWeight: FontWeight.w600,
@@ -91,7 +89,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                       padding:
                           EdgeInsetsDirectional.fromSTEB(0.0, 6.0, 0.0, 0.0),
                       child: Text(
-                        'Made to order with fresh ingredients each week.',
+                        'Get estimated nutritions content from image',
                         style: FlutterFlowTheme.of(context).labelLarge,
                       ),
                     ),
@@ -101,6 +99,43 @@ class _DashboardWidgetState extends State<DashboardWidget> {
               controller == null ? SizedBox.shrink() : Expanded(child: CameraPreview(
                 controller!
               )),
+              Padding(
+                padding:
+                EdgeInsetsDirectional.fromSTEB(0.0, 0, 0.0, 0.0),
+                child: FFButtonWidget(
+                  onPressed: () async {
+                    final photo = await controller!.takePicture();
+                    final bytes = await photo.readAsBytes();
+                    setState((){
+                      _model.setImage(bytes);
+                    });
+                    _showMealConfirmation();
+                  },
+                  text: 'Make photo',
+                  options: FFButtonOptions(
+                    width: double.infinity,
+                    height: 50.0,
+                    padding:
+                    EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                    iconPadding:
+                    EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                    color: FlutterFlowTheme.of(context).primary,
+                    textStyle:
+                    FlutterFlowTheme.of(context).bodyMedium.override(
+                      fontFamily: 'Manrope',
+                      color: FlutterFlowTheme.of(context)
+                          .primaryBackground,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    elevation: 0.0,
+                    borderSide: BorderSide(
+                      color: Colors.transparent,
+                      width: 1.0,
+                    ),
+                    borderRadius: BorderRadius.zero
+                  ),
+                ),
+              ),
               /*Expanded(
                 child: Padding(
                   padding: EdgeInsets.all(14.0),
@@ -168,4 +203,134 @@ class _DashboardWidgetState extends State<DashboardWidget> {
       ),
     );
   }
+
+  final _nutritions = [
+    FoodNutrition(name: 'Calories', amount: 254, quantityPrefix: 'mg'),
+    FoodNutrition(name: 'Fat', amount: 24, quantityPrefix: 'g'),
+    FoodNutrition(name: 'Protein', amount: 3, quantityPrefix: 'mg'),
+    FoodNutrition(name: 'Vitamin D', amount: 2, quantityPrefix: 'mg'),
+  ];
+
+  Future<void> _showMealConfirmation(){
+    if(_model.pickedImage == null) return Future.value();
+    return showModalBottomSheet(context: context, builder: (context){
+      return Container(
+        height: 450,
+        width: double.infinity,
+        child: Column(
+          children: [
+            Container(
+              height: 250,
+              width: double.infinity,
+              color: Colors.grey,
+              child: FittedBox(
+                  fit: BoxFit.cover,
+                  child: Image.memory(_model.pickedImage!)),
+            ),
+            Container(height: 150, width: double.infinity, color: Colors.white, child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  children: _nutritions.map((e) => Row(
+                    children: [
+                      Text(e.name, style: TextStyle(
+                          fontFamily: 'Urbanist', fontWeight: FontWeight.w600, fontSize: 16
+                      ),),
+                      Spacer(),
+                      Text(e.amount.toStringAsFixed(2) + "" + e.quantityPrefix, style: TextStyle(fontSize: 16, fontFamily: 'Manrope'),)
+                    ],
+                  )).toList().paddingTopEach(5),
+                ),
+              ),
+            ),),
+            Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding:
+                    EdgeInsetsDirectional.fromSTEB(0.0, 0, 0.0, 0.0),
+                    child: FFButtonWidget(
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                      },
+                      text: 'Deny',
+                      options: FFButtonOptions(
+                          width: double.infinity,
+                          height: 50.0,
+                          padding:
+                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                          iconPadding:
+                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                          color: FlutterFlowTheme.of(context).error,
+                          textStyle:
+                          FlutterFlowTheme.of(context).bodyMedium.override(
+                            fontFamily: 'Manrope',
+                            color: FlutterFlowTheme.of(context)
+                                .primaryBackground,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          elevation: 0.0,
+                          borderSide: BorderSide(
+                            color: Colors.transparent,
+                            width: 1.0,
+                          ),
+                          borderRadius: BorderRadius.zero
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding:
+                    EdgeInsetsDirectional.fromSTEB(0.0, 0, 0.0, 0.0),
+                    child: FFButtonWidget(
+                      onPressed: () async {
+
+                      },
+                      text: 'Eat',
+                      options: FFButtonOptions(
+                          width: double.infinity,
+                          height: 50.0,
+                          padding:
+                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                          iconPadding:
+                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                          color: FlutterFlowTheme.of(context).primary,
+                          textStyle:
+                          FlutterFlowTheme.of(context).bodyMedium.override(
+                            fontFamily: 'Manrope',
+                            color: FlutterFlowTheme.of(context)
+                                .primaryBackground,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          elevation: 0.0,
+                          borderSide: BorderSide(
+                            color: Colors.transparent,
+                            width: 1.0,
+                          ),
+                          borderRadius: BorderRadius.zero
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      );
+    });
+  }
+}
+
+class FoodNutrition{
+  final String name;
+  final double amount;
+  final String quantityPrefix;
+
+  const FoodNutrition({
+    required this.name,
+    required this.amount,
+    this.quantityPrefix = '',
+  });
+
 }

@@ -41,25 +41,30 @@ class UsersRecord extends FirestoreRecord {
   DateTime? get createdTime => _createdTime;
   bool hasCreatedTime() => _createdTime != null;
 
-  // "phone_number" field.
-  String? _phoneNumber;
-  String get phoneNumber => _phoneNumber ?? '';
-  bool hasPhoneNumber() => _phoneNumber != null;
+  // "age" field.
+  String? _age;
+  String? get age => _age ?? '20';
+  bool hasAge() => _age != null;
 
-  // "diet" field.
-  String? _diet;
-  String get diet => _diet ?? '';
-  bool hasDiet() => _diet != null;
+  // "weight" field.
+  String? _weight;
+  String get weight => _weight ?? '60 kg';
+  bool hasWeight() => _weight != null;
 
-  // "allergens" field.
-  List<String>? _allergens;
-  List<String> get allergens => _allergens ?? const [];
-  bool hasAllergens() => _allergens != null;
+  // "gender" field.
+  String? _gender;
+  String get gender => _gender ?? 'Male';
+  bool hasGender() => _gender != null;
 
-  // "ingredient_dislikes" field.
-  List<String>? _ingredientDislikes;
-  List<String> get ingredientDislikes => _ingredientDislikes ?? const [];
-  bool hasIngredientDislikes() => _ingredientDislikes != null;
+  // "activityLevel" field.
+  String? _activityLevel;
+  String get activityLevel => _activityLevel ?? 'High';
+  bool hasActivityLevel() => _activityLevel != null;
+
+  // "bodyGoals" field.
+  String? _bodyGoals;
+  String get bodyGoals => _bodyGoals ?? 'Lose weight';
+  bool hasBodyGoals() => _bodyGoals != null;
 
   void _initializeFields() {
     _email = snapshotData['email'] as String?;
@@ -67,10 +72,11 @@ class UsersRecord extends FirestoreRecord {
     _photoUrl = snapshotData['photo_url'] as String?;
     _uid = snapshotData['uid'] as String?;
     _createdTime = snapshotData['created_time'] as DateTime?;
-    _phoneNumber = snapshotData['phone_number'] as String?;
-    _diet = snapshotData['diet'] as String?;
-    _allergens = getDataList(snapshotData['allergens']);
-    _ingredientDislikes = getDataList(snapshotData['ingredient_dislikes']);
+    _age = snapshotData['age'] as String?;
+    _gender = snapshotData['gender'] as String?;
+    _weight = snapshotData['weight'] as String?;
+    _activityLevel = snapshotData['activityLevel'] as String?;
+    _bodyGoals = snapshotData['bodyGoals'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -112,8 +118,11 @@ Map<String, dynamic> createUsersRecordData({
   String? photoUrl,
   String? uid,
   DateTime? createdTime,
-  String? phoneNumber,
-  String? diet,
+  String? age,
+  String? gender,
+  String? weight,
+  String? activityLevel,
+  String? bodyGoals
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -122,8 +131,11 @@ Map<String, dynamic> createUsersRecordData({
       'photo_url': photoUrl,
       'uid': uid,
       'created_time': createdTime,
-      'phone_number': phoneNumber,
-      'diet': diet,
+      'age': age,
+      'gender': gender,
+      'weight': weight,
+      'activityLevel': activityLevel,
+      'bodyGoals': bodyGoals
     }.withoutNulls,
   );
 
@@ -135,16 +147,16 @@ class UsersRecordDocumentEquality implements Equality<UsersRecord> {
 
   @override
   bool equals(UsersRecord? e1, UsersRecord? e2) {
-    const listEquality = ListEquality();
     return e1?.email == e2?.email &&
         e1?.displayName == e2?.displayName &&
         e1?.photoUrl == e2?.photoUrl &&
         e1?.uid == e2?.uid &&
         e1?.createdTime == e2?.createdTime &&
-        e1?.phoneNumber == e2?.phoneNumber &&
-        e1?.diet == e2?.diet &&
-        listEquality.equals(e1?.allergens, e2?.allergens) &&
-        listEquality.equals(e1?.ingredientDislikes, e2?.ingredientDislikes);
+        e1?.age == e2?.age &&
+        e1?.gender == e2?.gender &&
+        e1?.weight == e2?.weight &&
+        e1?.activityLevel == e2?.activityLevel &&
+        e1?.bodyGoals == e2?.bodyGoals;
   }
 
   @override
@@ -154,10 +166,11 @@ class UsersRecordDocumentEquality implements Equality<UsersRecord> {
         e?.photoUrl,
         e?.uid,
         e?.createdTime,
-        e?.phoneNumber,
-        e?.diet,
-        e?.allergens,
-        e?.ingredientDislikes
+        e?.age,
+        e?.gender,
+        e?.weight,
+        e?.activityLevel,
+        e?.bodyGoals
       ]);
 
   @override

@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/backend/schema/structs/index.dart';
@@ -37,7 +39,7 @@ class _OnboardingWidgetState extends State<OnboardingWidget> {
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       logFirebaseEvent('ONBOARDING_PAGE_Onboarding_ON_INIT_STATE');
       logFirebaseEvent('Onboarding_update_page_state');
-      setState(() {
+      /*setState(() {
         _model.allergenSelection =
             (currentUserDocument?.allergens?.toList() ?? [])
                 .toList()
@@ -47,7 +49,7 @@ class _OnboardingWidgetState extends State<OnboardingWidget> {
             (currentUserDocument?.ingredientDislikes?.toList() ?? [])
                 .toList()
                 .cast<String>();
-      });
+      });*/
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
@@ -60,406 +62,500 @@ class _OnboardingWidgetState extends State<OnboardingWidget> {
     super.dispose();
   }
 
+  List<String> _ages = List.generate(80, (index) => (index + 4).toString());
+  List<String> _genders = ["Male","Female"];
+  List<String> _weight = List.generate(240, (index) => (15 + index).toString() + " kg");
+  List<String> _activityLevel = ["Low", "Medium", "High"];
+  List<String> _bodyGoals = ["Loose weight", "Build muscles", "Maintain fitness"];
+
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<OnboardingOptionsRecord>>(
-      stream: queryOnboardingOptionsRecord(
-        singleRecord: true,
-      ),
-      builder: (context, snapshot) {
-        // Customize what your widget looks like when it's loading.
-        if (!snapshot.hasData) {
-          return Scaffold(
-            backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-            body: Center(
-              child: SizedBox(
-                width: 50.0,
-                height: 50.0,
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    FlutterFlowTheme.of(context).primary,
-                  ),
-                ),
-              ),
-            ),
-          );
-        }
-        List<OnboardingOptionsRecord> onboardingOnboardingOptionsRecordList =
-            snapshot.data!;
-        // Return an empty Container when the item does not exist.
-        if (snapshot.data!.isEmpty) {
-          return Container();
-        }
-        final onboardingOnboardingOptionsRecord =
-            onboardingOnboardingOptionsRecordList.isNotEmpty
-                ? onboardingOnboardingOptionsRecordList.first
-                : null;
-        return GestureDetector(
-          onTap: () => _model.unfocusNode.canRequestFocus
-              ? FocusScope.of(context).requestFocus(_model.unfocusNode)
-              : FocusScope.of(context).unfocus(),
-          child: Scaffold(
-            key: scaffoldKey,
-            backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-            body: SafeArea(
-              top: true,
+    return GestureDetector(
+      onTap: () => _model.unfocusNode.canRequestFocus
+          ? FocusScope.of(context).requestFocus(_model.unfocusNode)
+          : FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        key: scaffoldKey,
+        backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+        body: SafeArea(
+          top: true,
+          child: Align(
+            alignment: AlignmentDirectional(0.0, 0.0),
+            child: Padding(
+              padding: EdgeInsets.all(24.0),
               child: Column(
                 mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Align(
-                      alignment: AlignmentDirectional(0.0, 0.0),
-                      child: Padding(
-                        padding: EdgeInsets.all(24.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            wrapWithModel(
-                              model: _model.customAppbarModel,
-                              updateCallback: () => setState(() {}),
-                              child: CustomAppbarWidget(
-                                backButton: true,
-                                actionButton: false,
-                                optionsButton: false,
-                                actionButtonAction: () async {},
-                                optionsButtonAction: () async {},
-                              ),
-                            ),
-                            Expanded(
-                              child: Container(
-                                width: double.infinity,
-                                height: 500.0,
-                                child: PageView(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  controller: _model.pageViewController ??=
-                                      PageController(initialPage: 0),
-                                  scrollDirection: Axis.horizontal,
-                                  children: [
-                                    Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0.0, 24.0, 0.0, 0.0),
-                                          child: Text(
-                                            'Select your diet',
-                                            style: FlutterFlowTheme.of(context)
-                                                .displaySmall,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0.0, 18.0, 0.0, 0.0),
-                                          child: Builder(
-                                            builder: (context) {
-                                              final diet =
-                                                  onboardingOnboardingOptionsRecord
-                                                          ?.dietOptions
-                                                          ?.toList() ??
-                                                      [];
-                                              return Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: List.generate(
-                                                    diet.length, (dietIndex) {
-                                                  final dietItem =
-                                                      diet[dietIndex];
-                                                  return DietItemWidget(
-                                                    key: Key(
-                                                        'Keybqj_${dietIndex}_of_${diet.length}'),
-                                                    dietType: dietItem.dietName,
-                                                    selectedDiet:
-                                                        _model.dietSelection!,
-                                                    dietTagline:
-                                                        dietItem.dietTagline,
-                                                    action: () async {
-                                                      logFirebaseEvent(
-                                                          'ONBOARDING_Container_bqjxf8do_CALLBACK');
-                                                      logFirebaseEvent(
-                                                          'dietItem_haptic_feedback');
-                                                      HapticFeedback
-                                                          .selectionClick();
-                                                      logFirebaseEvent(
-                                                          'dietItem_update_page_state');
-                                                      setState(() {
-                                                        _model.dietSelection =
-                                                            dietItem.dietName;
-                                                      });
-                                                    },
-                                                  );
-                                                }).divide(
-                                                    SizedBox(height: 8.0)),
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0.0, 24.0, 0.0, 0.0),
-                                          child: Text(
-                                            'Any allergies?',
-                                            style: FlutterFlowTheme.of(context)
-                                                .displaySmall,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0.0, 18.0, 0.0, 0.0),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Builder(
-                                                builder: (context) {
-                                                  final allergens =
-                                                      onboardingOnboardingOptionsRecord
-                                                              ?.allergenOptions
-                                                              ?.toList() ??
-                                                          [];
-                                                  return Wrap(
-                                                    spacing: 8.0,
-                                                    runSpacing: 8.0,
-                                                    alignment:
-                                                        WrapAlignment.start,
-                                                    crossAxisAlignment:
-                                                        WrapCrossAlignment
-                                                            .start,
-                                                    direction: Axis.horizontal,
-                                                    runAlignment:
-                                                        WrapAlignment.start,
-                                                    verticalDirection:
-                                                        VerticalDirection.down,
-                                                    clipBehavior: Clip.none,
-                                                    children: List.generate(
-                                                        allergens.length,
-                                                        (allergensIndex) {
-                                                      final allergensItem =
-                                                          allergens[
-                                                              allergensIndex];
-                                                      return PreferenceItemWidget(
-                                                        key: Key(
-                                                            'Keyxo4_${allergensIndex}_of_${allergens.length}'),
-                                                        text: allergensItem,
-                                                        selectedItems: _model
-                                                            .allergenSelection,
-                                                        action: () async {
-                                                          logFirebaseEvent(
-                                                              'ONBOARDING_Container_xo4ckmcp_CALLBACK');
-                                                          if (_model
-                                                              .allergenSelection
-                                                              .contains(
-                                                                  allergensItem)) {
-                                                            logFirebaseEvent(
-                                                                'preferenceItem_haptic_feedback');
-                                                            HapticFeedback
-                                                                .selectionClick();
-                                                            logFirebaseEvent(
-                                                                'preferenceItem_update_page_state');
-                                                            setState(() {
-                                                              _model.removeFromAllergenSelection(
-                                                                  allergensItem);
-                                                            });
-                                                          } else {
-                                                            logFirebaseEvent(
-                                                                'preferenceItem_haptic_feedback');
-                                                            HapticFeedback
-                                                                .selectionClick();
-                                                            logFirebaseEvent(
-                                                                'preferenceItem_update_page_state');
-                                                            setState(() {
-                                                              _model.addToAllergenSelection(
-                                                                  allergensItem);
-                                                            });
-                                                          }
-                                                        },
-                                                      );
-                                                    }),
-                                                  );
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0.0, 24.0, 0.0, 0.0),
-                                          child: Text(
-                                            'How about dislikes?',
-                                            style: FlutterFlowTheme.of(context)
-                                                .displaySmall,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0.0, 18.0, 0.0, 0.0),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Builder(
-                                                builder: (context) {
-                                                  final dislikes =
-                                                      onboardingOnboardingOptionsRecord
-                                                              ?.ingredientOptions
-                                                              ?.toList() ??
-                                                          [];
-                                                  return Wrap(
-                                                    spacing: 8.0,
-                                                    runSpacing: 8.0,
-                                                    alignment:
-                                                        WrapAlignment.start,
-                                                    crossAxisAlignment:
-                                                        WrapCrossAlignment
-                                                            .start,
-                                                    direction: Axis.horizontal,
-                                                    runAlignment:
-                                                        WrapAlignment.start,
-                                                    verticalDirection:
-                                                        VerticalDirection.down,
-                                                    clipBehavior: Clip.none,
-                                                    children: List.generate(
-                                                        dislikes.length,
-                                                        (dislikesIndex) {
-                                                      final dislikesItem =
-                                                          dislikes[
-                                                              dislikesIndex];
-                                                      return PreferenceItemWidget(
-                                                        key: Key(
-                                                            'Keygtj_${dislikesIndex}_of_${dislikes.length}'),
-                                                        text: dislikesItem,
-                                                        selectedItems: _model
-                                                            .ingredientSelection,
-                                                        action: () async {
-                                                          logFirebaseEvent(
-                                                              'ONBOARDING_Container_gtj3fvgd_CALLBACK');
-                                                          if (_model
-                                                              .ingredientSelection
-                                                              .contains(
-                                                                  dislikesItem)) {
-                                                            logFirebaseEvent(
-                                                                'preferenceItem_haptic_feedback');
-                                                            HapticFeedback
-                                                                .selectionClick();
-                                                            logFirebaseEvent(
-                                                                'preferenceItem_update_page_state');
-                                                            setState(() {
-                                                              _model.removeFromIngredientSelection(
-                                                                  dislikesItem);
-                                                            });
-                                                          } else {
-                                                            logFirebaseEvent(
-                                                                'preferenceItem_haptic_feedback');
-                                                            HapticFeedback
-                                                                .selectionClick();
-                                                            logFirebaseEvent(
-                                                                'preferenceItem_update_page_state');
-                                                            setState(() {
-                                                              _model.addToIngredientSelection(
-                                                                  dislikesItem);
-                                                            });
-                                                          }
-                                                        },
-                                                      );
-                                                    }),
-                                                  );
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                  wrapWithModel(
+                    model: _model.customAppbarModel,
+                    updateCallback: () => setState(() {}),
+                    child: CustomAppbarWidget(
+                      backButton: false,
+                      actionButtonText: 'Next',
+                      actionButton: true,
+                      actionButtonAction: () async {
+                        await currentUserReference!
+                            .update(createUsersRecordData(
+                            age: _model.age,
+                            gender: _model.gender,
+                            weight: _model.weight,
+                            activityLevel: _model.activityLevel,
+                            bodyGoals: _model.bodyGoals
+                        ));
+                        if(!mounted) return;
+                        context.goNamed('Dashboard');
+                      },
+                      optionsButtonAction: () async {},
                     ),
                   ),
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 12.0),
-                    child: FFButtonWidget(
-                      onPressed: () async {
-                        logFirebaseEvent('ONBOARDING_PAGE_CONTINUE_BTN_ON_TAP');
-                        logFirebaseEvent('Button_haptic_feedback');
-                        HapticFeedback.lightImpact();
-                        logFirebaseEvent('Button_update_app_state');
-                        setState(() {
-                          FFAppState().userDiet = _model.dietSelection!;
-                          FFAppState().userAllergens =
-                              _model.allergenSelection.toList().cast<String>();
-                          FFAppState().userIngredientDislikes = _model
-                              .ingredientSelection
-                              .toList()
-                              .cast<String>();
-                        });
-                        if (_model.pageViewCurrentIndex == 2) {
-                          logFirebaseEvent('Button_navigate_to');
-
-                          context.pushNamed('Onboarding_CreateAccount');
-                        } else {
-                          logFirebaseEvent('Button_page_view');
-                          await _model.pageViewController?.nextPage(
-                            duration: Duration(milliseconds: 300),
-                            curve: Curves.ease,
-                          );
-                        }
-                      },
-                      text: 'Continue',
-                      options: FFButtonOptions(
-                        width: double.infinity,
-                        height: 50.0,
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                        iconPadding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                        color: FlutterFlowTheme.of(context).primary,
-                        textStyle: FlutterFlowTheme.of(context).titleSmall,
-                        elevation: 0.0,
-                        borderSide: BorderSide(
-                          color: Colors.transparent,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(25.0),
-                      ),
+                    EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                    child: Text(
+                      'Set up',
+                      style: FlutterFlowTheme.of(context).displaySmall,
                     ),
+                  ),
+                  Padding(
+                      padding:
+                      EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              InkWell(
+                                splashColor: Colors.transparent,
+                                focusColor: Colors.transparent,
+                                hoverColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                onTap: () async {
+                                  /*setState(() {
+                                  _model.changeAge('21');
+                                });*/
+                                  _showDialog(_model.age, _ages, (i){
+                                    setState(() {
+                                      _model.changeAge(_ages[i]);
+                                    });
+                                  });
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(),
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        0.0, 12.0, 0.0, 12.0),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Container(
+                                          width: 40.0,
+                                          height: 40.0,
+                                          decoration: BoxDecoration(
+                                            color:
+                                            FlutterFlowTheme.of(context)
+                                                .accent1,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Align(
+                                            alignment: AlignmentDirectional(
+                                                0.0, 0.0),
+                                            child: Icon(
+                                              Icons.celebration_outlined,
+                                              color:
+                                              FlutterFlowTheme.of(context)
+                                                  .primary,
+                                              size: 20.0,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                          EdgeInsetsDirectional.fromSTEB(
+                                              18.0, 0.0, 0.0, 0.0),
+                                          child: Text(
+                                            'Age',
+                                            style:
+                                            FlutterFlowTheme.of(context)
+                                                .bodyLarge,
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        Padding(
+                                          padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 18.0, 0.0),
+                                          child: Text(
+                                            _model.age,
+                                            style:
+                                            FlutterFlowTheme.of(context)
+                                                .bodyLarge,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Divider(
+                                height: 1.0,
+                                thickness: 1.0,
+                                color: FlutterFlowTheme.of(context).accent4,
+                              ),
+                            ],
+                          ),
+                          Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              InkWell(
+                                splashColor: Colors.transparent,
+                                focusColor: Colors.transparent,
+                                hoverColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                onTap: () async {
+                                  _showDialog(_model.gender, _genders, (i){
+                                    setState(() {
+                                      _model.changeGender(_genders[i]);
+                                    });
+                                  });
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(),
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        0.0, 12.0, 0.0, 12.0),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Container(
+                                          width: 40.0,
+                                          height: 40.0,
+                                          decoration: BoxDecoration(
+                                            color:
+                                            FlutterFlowTheme.of(context)
+                                                .accent1,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Align(
+                                            alignment: AlignmentDirectional(
+                                                0.0, 0.0),
+                                            child: Icon(
+                                              Icons.man,
+                                              color:
+                                              FlutterFlowTheme.of(context)
+                                                  .primary,
+                                              size: 20.0,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                          EdgeInsetsDirectional.fromSTEB(
+                                              18.0, 0.0, 0.0, 0.0),
+                                          child: Text(
+                                            'Gender',
+                                            style:
+                                            FlutterFlowTheme.of(context)
+                                                .bodyLarge,
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        Padding(
+                                          padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 18.0, 0.0),
+                                          child: Text(
+                                            _model.gender,
+                                            style:
+                                            FlutterFlowTheme.of(context)
+                                                .bodyLarge,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Divider(
+                                height: 1.0,
+                                thickness: 1.0,
+                                color: FlutterFlowTheme.of(context).accent4,
+                              ),
+                            ],
+                          ),
+                          Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              InkWell(
+                                splashColor: Colors.transparent,
+                                focusColor: Colors.transparent,
+                                hoverColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                onTap: () async {
+                                  _showDialog(_model.weight, _weight, (i){
+                                    setState(() {
+                                      _model.changeWeight(_weight[i]);
+                                    });
+                                  });
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(),
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        0.0, 12.0, 0.0, 12.0),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Container(
+                                          width: 40.0,
+                                          height: 40.0,
+                                          decoration: BoxDecoration(
+                                            color:
+                                            FlutterFlowTheme.of(context)
+                                                .accent1,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Align(
+                                            alignment: AlignmentDirectional(
+                                                0.0, 0.0),
+                                            child: Icon(
+                                              Icons.fitness_center_outlined,
+                                              color:
+                                              FlutterFlowTheme.of(context)
+                                                  .primary,
+                                              size: 20.0,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                          EdgeInsetsDirectional.fromSTEB(
+                                              18.0, 0.0, 0.0, 0.0),
+                                          child: Text(
+                                            'Weight',
+                                            style:
+                                            FlutterFlowTheme.of(context)
+                                                .bodyLarge,
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        Padding(
+                                          padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 18.0, 0.0),
+                                          child: Text(
+                                            _model.weight,
+                                            style:
+                                            FlutterFlowTheme.of(context)
+                                                .bodyLarge,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Divider(
+                                height: 1.0,
+                                thickness: 1.0,
+                                color: FlutterFlowTheme.of(context).accent4,
+                              ),
+                            ],
+                          ),
+                          Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              InkWell(
+                                splashColor: Colors.transparent,
+                                focusColor: Colors.transparent,
+                                hoverColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                onTap: () async {
+                                  _showDialog(_model.activityLevel, _activityLevel, (i){
+                                    setState(() {
+                                      _model.changeActivityLevel(_activityLevel[i]);
+                                    });
+                                  });
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(),
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        0.0, 12.0, 0.0, 12.0),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Container(
+                                          width: 40.0,
+                                          height: 40.0,
+                                          decoration: BoxDecoration(
+                                            color:
+                                            FlutterFlowTheme.of(context)
+                                                .accent1,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Align(
+                                            alignment: AlignmentDirectional(
+                                                0.0, 0.0),
+                                            child: Icon(
+                                              Icons.directions_bike_outlined,
+                                              color:
+                                              FlutterFlowTheme.of(context)
+                                                  .primary,
+                                              size: 20.0,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                          EdgeInsetsDirectional.fromSTEB(
+                                              18.0, 0.0, 0.0, 0.0),
+                                          child: Text(
+                                            'Activity level',
+                                            style:
+                                            FlutterFlowTheme.of(context)
+                                                .bodyLarge,
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        Padding(
+                                          padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 18.0, 0.0),
+                                          child: Text(
+                                            _model.activityLevel,
+                                            style:
+                                            FlutterFlowTheme.of(context)
+                                                .bodyLarge,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Divider(
+                                height: 1.0,
+                                thickness: 1.0,
+                                color: FlutterFlowTheme.of(context).accent4,
+                              ),
+                            ],
+                          ),
+                          Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              InkWell(
+                                splashColor: Colors.transparent,
+                                focusColor: Colors.transparent,
+                                hoverColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                onTap: () async {
+                                  _showDialog(_model.bodyGoals, _bodyGoals, (i){
+                                    setState(() {
+                                      _model.changeBodyGoals(_bodyGoals[i]);
+                                    });
+                                  });
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(),
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        0.0, 12.0, 0.0, 12.0),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Container(
+                                          width: 40.0,
+                                          height: 40.0,
+                                          decoration: BoxDecoration(
+                                            color:
+                                            FlutterFlowTheme.of(context)
+                                                .accent1,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Align(
+                                            alignment: AlignmentDirectional(
+                                                0.0, 0.0),
+                                            child: Icon(
+                                              Icons.domain_verification_outlined,
+                                              color:
+                                              FlutterFlowTheme.of(context)
+                                                  .primary,
+                                              size: 20.0,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                          EdgeInsetsDirectional.fromSTEB(
+                                              18.0, 0.0, 0.0, 0.0),
+                                          child: Text(
+                                            'Body goals',
+                                            style:
+                                            FlutterFlowTheme.of(context)
+                                                .bodyLarge,
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        Padding(
+                                          padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 18.0, 0.0),
+                                          child: Text(
+                                            _model.bodyGoals,
+                                            style:
+                                            FlutterFlowTheme.of(context)
+                                                .bodyLarge,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Divider(
+                                height: 1.0,
+                                thickness: 1.0,
+                                color: FlutterFlowTheme.of(context).accent4,
+                              ),
+                            ],
+                          ),
+                        ],
+                      )
                   ),
                 ],
               ),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
+  }
+
+  void _showDialog(String initialItem, List<String> items, Function(int) onSelectedItemChanged) {
+    showCupertinoModalPopup<void>(
+        context: context,
+        builder: (BuildContext context) => Container(
+          height: 216,
+          padding: const EdgeInsets.only(top: 6.0),
+          // The Bottom margin is provided to align the popup above the system navigation bar.
+          margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          // Provide a background color for the popup.
+          color: CupertinoColors.systemBackground.resolveFrom(context),
+          // Use a SafeArea widget to avoid system overlaps.
+          child: SafeArea(
+            top: false,
+            child: CupertinoPicker(
+              magnification: 1.22,
+              squeeze: 1.2,
+              useMagnifier: true,
+              itemExtent: 30,
+              // This sets the initial item.
+              scrollController: FixedExtentScrollController(
+                initialItem: items.indexWhere((e) => e == initialItem),
+              ),
+              // This is called when selected item is changed.
+              onSelectedItemChanged: onSelectedItemChanged,
+              children:
+              List<Widget>.generate(items.length, (int index) {
+                return Center(child: Text(items[index]));
+              }),
+            ),
+          ),
+        ));
   }
 }

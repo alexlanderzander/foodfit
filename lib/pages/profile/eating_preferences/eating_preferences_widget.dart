@@ -1,3 +1,6 @@
+import 'package:flutter/cupertino.dart';
+
+import '../../../auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/components/custom_appbar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -39,6 +42,12 @@ class _EatingPreferencesWidgetState extends State<EatingPreferencesWidget> {
     super.dispose();
   }
 
+  List<String> _ages = List.generate(80, (index) => (index + 4).toString());
+  List<String> _genders = ["Male","Female"];
+  List<String> _weight = List.generate(240, (index) => (15 + index).toString() + " kg");
+  List<String> _activityLevel = ["Low", "Medium", "High"];
+  List<String> _bodyGoals = ["Loose weight", "Build muscles", "Maintain fitness"];
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -64,8 +73,18 @@ class _EatingPreferencesWidgetState extends State<EatingPreferencesWidget> {
                     updateCallback: () => setState(() {}),
                     child: CustomAppbarWidget(
                       backButton: true,
-                      actionButton: false,
-                      actionButtonAction: () async {},
+                      actionButtonText: 'Save',
+                      actionButton: true,
+                      actionButtonAction: () async {
+                        await currentUserReference!
+                            .update(createUsersRecordData(
+                          age: _model.age,
+                          gender: _model.gender,
+                          weight: _model.weight,
+                          activityLevel: _model.activityLevel,
+                          bodyGoals: _model.bodyGoals
+                        ));
+                      },
                       optionsButtonAction: () async {},
                     ),
                   ),
@@ -73,274 +92,406 @@ class _EatingPreferencesWidgetState extends State<EatingPreferencesWidget> {
                     padding:
                         EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
                     child: Text(
-                      'Eating Preferences',
+                      'Personal Health Settings',
                       style: FlutterFlowTheme.of(context).displaySmall,
                     ),
                   ),
                   Padding(
                     padding:
                         EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
-                    child: StreamBuilder<List<CompanyInformationRecord>>(
-                      stream: queryCompanyInformationRecord(
-                        singleRecord: true,
-                      ),
-                      builder: (context, snapshot) {
-                        // Customize what your widget looks like when it's loading.
-                        if (!snapshot.hasData) {
-                          return Center(
-                            child: SizedBox(
-                              width: 50.0,
-                              height: 50.0,
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  FlutterFlowTheme.of(context).primary,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            InkWell(
+                              splashColor: Colors.transparent,
+                              focusColor: Colors.transparent,
+                              hoverColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              onTap: () async {
+                                /*setState(() {
+                                  _model.changeAge('21');
+                                });*/
+                                _showDialog(_model.age, _ages, (i){
+                                  setState(() {
+                                    _model.changeAge(_ages[i]);
+                                  });
+                                });
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(),
+                                child: Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      0.0, 12.0, 0.0, 12.0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Container(
+                                        width: 40.0,
+                                        height: 40.0,
+                                        decoration: BoxDecoration(
+                                          color:
+                                          FlutterFlowTheme.of(context)
+                                              .accent1,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Align(
+                                          alignment: AlignmentDirectional(
+                                              0.0, 0.0),
+                                          child: Icon(
+                                            Icons.celebration_outlined,
+                                            color:
+                                            FlutterFlowTheme.of(context)
+                                                .primary,
+                                            size: 20.0,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                        EdgeInsetsDirectional.fromSTEB(
+                                            18.0, 0.0, 0.0, 0.0),
+                                        child: Text(
+                                          'Age',
+                                          style:
+                                          FlutterFlowTheme.of(context)
+                                              .bodyLarge,
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 18.0, 0.0),
+                                        child: Text(
+                                          _model.age,
+                                          style:
+                                          FlutterFlowTheme.of(context)
+                                              .bodyLarge,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          );
-                        }
-                        List<CompanyInformationRecord>
-                            columnCompanyInformationRecordList = snapshot.data!;
-                        // Return an empty Container when the item does not exist.
-                        if (snapshot.data!.isEmpty) {
-                          return Container();
-                        }
-                        final columnCompanyInformationRecord =
-                            columnCompanyInformationRecordList.isNotEmpty
-                                ? columnCompanyInformationRecordList.first
-                                : null;
-                        return Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Column(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                InkWell(
-                                  splashColor: Colors.transparent,
-                                  focusColor: Colors.transparent,
-                                  hoverColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  onTap: () async {
-                                    logFirebaseEvent(
-                                        'EATING_PREFERENCES_Container_5vzne7wd_ON');
-                                    logFirebaseEvent('Container_navigate_to');
-
-                                    context.pushNamed(
-                                      'EditPreferences',
-                                      queryParameters: {
-                                        'page': serializeParam(
-                                          0,
-                                          ParamType.int,
-                                        ),
-                                      }.withoutNulls,
-                                    );
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(),
-                                    child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 12.0, 0.0, 12.0),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        children: [
-                                          Container(
-                                            width: 40.0,
-                                            height: 40.0,
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .accent1,
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: Align(
-                                              alignment: AlignmentDirectional(
-                                                  0.0, 0.0),
-                                              child: Icon(
-                                                Icons.fastfood_outlined,
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .primary,
-                                                size: 20.0,
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    18.0, 0.0, 0.0, 0.0),
-                                            child: Text(
-                                              'Diet',
-                                              style:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyLarge,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Divider(
-                                  height: 1.0,
-                                  thickness: 1.0,
-                                  color: FlutterFlowTheme.of(context).accent4,
-                                ),
-                              ],
-                            ),
-                            Column(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                InkWell(
-                                  splashColor: Colors.transparent,
-                                  focusColor: Colors.transparent,
-                                  hoverColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  onTap: () async {
-                                    logFirebaseEvent(
-                                        'EATING_PREFERENCES_Container_5uwgtvf0_ON');
-                                    logFirebaseEvent('Container_navigate_to');
-
-                                    context.pushNamed(
-                                      'EditPreferences',
-                                      queryParameters: {
-                                        'page': serializeParam(
-                                          1,
-                                          ParamType.int,
-                                        ),
-                                      }.withoutNulls,
-                                    );
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(),
-                                    child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 12.0, 0.0, 12.0),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        children: [
-                                          Container(
-                                            width: 40.0,
-                                            height: 40.0,
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .accent1,
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: Align(
-                                              alignment: AlignmentDirectional(
-                                                  0.0, 0.0),
-                                              child: Icon(
-                                                Icons.error_outline_sharp,
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .primary,
-                                                size: 20.0,
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    18.0, 0.0, 0.0, 0.0),
-                                            child: Text(
-                                              'Allergens',
-                                              style:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyLarge,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Divider(
-                                  height: 1.0,
-                                  thickness: 1.0,
-                                  color: FlutterFlowTheme.of(context).accent4,
-                                ),
-                              ],
-                            ),
-                            Column(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                InkWell(
-                                  splashColor: Colors.transparent,
-                                  focusColor: Colors.transparent,
-                                  hoverColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  onTap: () async {
-                                    logFirebaseEvent(
-                                        'EATING_PREFERENCES_Container_k93592n4_ON');
-                                    logFirebaseEvent('Container_navigate_to');
-
-                                    context.pushNamed(
-                                      'EditPreferences',
-                                      queryParameters: {
-                                        'page': serializeParam(
-                                          2,
-                                          ParamType.int,
-                                        ),
-                                      }.withoutNulls,
-                                    );
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(),
-                                    child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 12.0, 0.0, 12.0),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        children: [
-                                          Container(
-                                            width: 40.0,
-                                            height: 40.0,
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .accent1,
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: Align(
-                                              alignment: AlignmentDirectional(
-                                                  0.0, 0.0),
-                                              child: Icon(
-                                                Icons.thumb_down_outlined,
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .primary,
-                                                size: 20.0,
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    18.0, 0.0, 0.0, 0.0),
-                                            child: Text(
-                                              'Disliked Ingredients',
-                                              style:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyLarge,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Divider(
-                                  height: 1.0,
-                                  thickness: 1.0,
-                                  color: FlutterFlowTheme.of(context).accent4,
-                                ),
-                              ],
+                            Divider(
+                              height: 1.0,
+                              thickness: 1.0,
+                              color: FlutterFlowTheme.of(context).accent4,
                             ),
                           ],
-                        );
-                      },
-                    ),
+                        ),
+                        Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            InkWell(
+                              splashColor: Colors.transparent,
+                              focusColor: Colors.transparent,
+                              hoverColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              onTap: () async {
+                                _showDialog(_model.gender, _genders, (i){
+                                  setState(() {
+                                    _model.changeGender(_genders[i]);
+                                  });
+                                });
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(),
+                                child: Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      0.0, 12.0, 0.0, 12.0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Container(
+                                        width: 40.0,
+                                        height: 40.0,
+                                        decoration: BoxDecoration(
+                                          color:
+                                          FlutterFlowTheme.of(context)
+                                              .accent1,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Align(
+                                          alignment: AlignmentDirectional(
+                                              0.0, 0.0),
+                                          child: Icon(
+                                            Icons.man,
+                                            color:
+                                            FlutterFlowTheme.of(context)
+                                                .primary,
+                                            size: 20.0,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                        EdgeInsetsDirectional.fromSTEB(
+                                            18.0, 0.0, 0.0, 0.0),
+                                        child: Text(
+                                          'Gender',
+                                          style:
+                                          FlutterFlowTheme.of(context)
+                                              .bodyLarge,
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 18.0, 0.0),
+                                        child: Text(
+                                          _model.gender,
+                                          style:
+                                          FlutterFlowTheme.of(context)
+                                              .bodyLarge,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Divider(
+                              height: 1.0,
+                              thickness: 1.0,
+                              color: FlutterFlowTheme.of(context).accent4,
+                            ),
+                          ],
+                        ),
+                        Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            InkWell(
+                              splashColor: Colors.transparent,
+                              focusColor: Colors.transparent,
+                              hoverColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              onTap: () async {
+                                _showDialog(_model.weight, _weight, (i){
+                                  setState(() {
+                                    _model.changeWeight(_weight[i]);
+                                  });
+                                });
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(),
+                                child: Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      0.0, 12.0, 0.0, 12.0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Container(
+                                        width: 40.0,
+                                        height: 40.0,
+                                        decoration: BoxDecoration(
+                                          color:
+                                          FlutterFlowTheme.of(context)
+                                              .accent1,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Align(
+                                          alignment: AlignmentDirectional(
+                                              0.0, 0.0),
+                                          child: Icon(
+                                            Icons.fitness_center_outlined,
+                                            color:
+                                            FlutterFlowTheme.of(context)
+                                                .primary,
+                                            size: 20.0,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                        EdgeInsetsDirectional.fromSTEB(
+                                            18.0, 0.0, 0.0, 0.0),
+                                        child: Text(
+                                          'Weight',
+                                          style:
+                                          FlutterFlowTheme.of(context)
+                                              .bodyLarge,
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 18.0, 0.0),
+                                        child: Text(
+                                          _model.weight,
+                                          style:
+                                          FlutterFlowTheme.of(context)
+                                              .bodyLarge,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Divider(
+                              height: 1.0,
+                              thickness: 1.0,
+                              color: FlutterFlowTheme.of(context).accent4,
+                            ),
+                          ],
+                        ),
+                        Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            InkWell(
+                              splashColor: Colors.transparent,
+                              focusColor: Colors.transparent,
+                              hoverColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              onTap: () async {
+                                _showDialog(_model.activityLevel, _activityLevel, (i){
+                                  setState(() {
+                                    _model.changeActivityLevel(_activityLevel[i]);
+                                  });
+                                });
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(),
+                                child: Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      0.0, 12.0, 0.0, 12.0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Container(
+                                        width: 40.0,
+                                        height: 40.0,
+                                        decoration: BoxDecoration(
+                                          color:
+                                          FlutterFlowTheme.of(context)
+                                              .accent1,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Align(
+                                          alignment: AlignmentDirectional(
+                                              0.0, 0.0),
+                                          child: Icon(
+                                            Icons.directions_bike_outlined,
+                                            color:
+                                            FlutterFlowTheme.of(context)
+                                                .primary,
+                                            size: 20.0,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                        EdgeInsetsDirectional.fromSTEB(
+                                            18.0, 0.0, 0.0, 0.0),
+                                        child: Text(
+                                          'Activity level',
+                                          style:
+                                          FlutterFlowTheme.of(context)
+                                              .bodyLarge,
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 18.0, 0.0),
+                                        child: Text(
+                                          _model.activityLevel,
+                                          style:
+                                          FlutterFlowTheme.of(context)
+                                              .bodyLarge,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Divider(
+                              height: 1.0,
+                              thickness: 1.0,
+                              color: FlutterFlowTheme.of(context).accent4,
+                            ),
+                          ],
+                        ),
+                        Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            InkWell(
+                              splashColor: Colors.transparent,
+                              focusColor: Colors.transparent,
+                              hoverColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              onTap: () async {
+                                _showDialog(_model.bodyGoals, _bodyGoals, (i){
+                                  setState(() {
+                                    _model.changeBodyGoals(_bodyGoals[i]);
+                                  });
+                                });
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(),
+                                child: Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      0.0, 12.0, 0.0, 12.0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Container(
+                                        width: 40.0,
+                                        height: 40.0,
+                                        decoration: BoxDecoration(
+                                          color:
+                                          FlutterFlowTheme.of(context)
+                                              .accent1,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Align(
+                                          alignment: AlignmentDirectional(
+                                              0.0, 0.0),
+                                          child: Icon(
+                                            Icons.domain_verification_outlined,
+                                            color:
+                                            FlutterFlowTheme.of(context)
+                                                .primary,
+                                            size: 20.0,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                        EdgeInsetsDirectional.fromSTEB(
+                                            18.0, 0.0, 0.0, 0.0),
+                                        child: Text(
+                                          'Body goals',
+                                          style:
+                                          FlutterFlowTheme.of(context)
+                                              .bodyLarge,
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 18.0, 0.0),
+                                        child: Text(
+                                          _model.bodyGoals,
+                                          style:
+                                          FlutterFlowTheme.of(context)
+                                              .bodyLarge,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Divider(
+                              height: 1.0,
+                              thickness: 1.0,
+                              color: FlutterFlowTheme.of(context).accent4,
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
                   ),
                 ],
               ),
@@ -349,5 +500,40 @@ class _EatingPreferencesWidgetState extends State<EatingPreferencesWidget> {
         ),
       ),
     );
+  }
+
+  void _showDialog(String initialItem, List<String> items, Function(int) onSelectedItemChanged) {
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) => Container(
+        height: 216,
+        padding: const EdgeInsets.only(top: 6.0),
+        // The Bottom margin is provided to align the popup above the system navigation bar.
+        margin: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        // Provide a background color for the popup.
+        color: CupertinoColors.systemBackground.resolveFrom(context),
+        // Use a SafeArea widget to avoid system overlaps.
+        child: SafeArea(
+          top: false,
+          child: CupertinoPicker(
+            magnification: 1.22,
+            squeeze: 1.2,
+            useMagnifier: true,
+            itemExtent: 30,
+            // This sets the initial item.
+            scrollController: FixedExtentScrollController(
+              initialItem: items.indexWhere((e) => e == initialItem),
+            ),
+            // This is called when selected item is changed.
+            onSelectedItemChanged: onSelectedItemChanged,
+            children:
+            List<Widget>.generate(items.length, (int index) {
+              return Center(child: Text(items[index]));
+            }),
+        ),
+      ),
+    ));
   }
 }

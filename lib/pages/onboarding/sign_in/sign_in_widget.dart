@@ -310,8 +310,11 @@ class _SignInWidgetState extends State<SignInWidget> {
                             if (user == null) {
                               return;
                             }
-
-                            context.goNamedAuth('Dashboard', context.mounted);
+                            if(!currentUserDocument!.hasAge()){
+                              context.goNamedAuth('Onboarding', context.mounted);
+                            }else{
+                              context.goNamedAuth('Dashboard', context.mounted);
+                            }
                           },
                           text: 'Sign In',
                           options: FFButtonOptions(

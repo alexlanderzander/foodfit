@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:camera/camera.dart';
 
 import '../../../backend/schema/food_nutrition.dart';
@@ -110,7 +112,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                     setState((){
                       _model.setImage(bytes);
                     });
-                    final nutritions = await _showMealConfirmation();
+                    final nutritions = await _showMealConfirmation(NutritionRandomGenerator().generate());
                     if(nutritions == null) return;
                     await addMealToHistory(photo.path,nutritions);
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Added")));
@@ -208,14 +210,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     );
   }
 
-  final _nutritions = [
-    const FoodNutrition(name: 'Calories', amount: 254, quantityPrefix: 'mg'),
-    const FoodNutrition(name: 'Fat', amount: 24, quantityPrefix: 'g'),
-    const FoodNutrition(name: 'Protein', amount: 3, quantityPrefix: 'mg'),
-    const FoodNutrition(name: 'Vitamin D', amount: 2, quantityPrefix: 'mg'),
-  ];
-
-  Future<List<FoodNutrition>?> _showMealConfirmation() async{
+  Future<List<FoodNutrition>?> _showMealConfirmation(List<FoodNutrition> nutritions) async{
     if(_model.pickedImage == null) return null;
     return showModalBottomSheet(context: context, builder: (context){
       return Container(
@@ -235,7 +230,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(
-                  children: _nutritions.map((e) => Row(
+                  children: nutritions.map((e) => Row(
                     children: [
                       Text(e.name, style: const TextStyle(
                           fontFamily: 'Urbanist', fontWeight: FontWeight.w600, fontSize: 16
@@ -289,7 +284,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                     const EdgeInsetsDirectional.fromSTEB(0.0, 0, 0.0, 0.0),
                     child: FFButtonWidget(
                       onPressed: () async {
-                        Navigator.of(context).pop(_nutritions);
+                        Navigator.of(context).pop(nutritions);
                       },
                       text: 'Eat',
                       options: FFButtonOptions(
@@ -323,5 +318,52 @@ class _DashboardWidgetState extends State<DashboardWidget> {
         ),
       );
     });
+  }
+}
+
+class NutritionRandomGenerator {
+  final _availableNutrients = [
+    'Calories',
+    'Carbohydrates',
+    'Minerals',
+    'Fat',
+    'Fiber',
+    'Micronutritients',
+    'Protein',
+    'Vitamin A',
+    'Vitamin B',
+  ];
+  final _rand = Random();
+  final _quantityPrefixes = ['mg', 'g'];
+
+  List<FoodNutrition> generate() {
+    final List<FoodNutrition> nutritionList = [];
+
+    // Add Calories as it's mandatory
+    nutritionList.add(
+      FoodNutrition(
+        name: 'Calories',
+        amount: _rand.nextInt(300) + 50,  // you can change the range as you want
+        quantityPrefix: 'mg',
+      ),
+    );
+
+    // Remove 'Calories' from available nutrients
+    _availableNutrients.remove('Calories');
+
+    // Randomly add other 3 nutrients
+    for (int i = 0; i < 3; i++) {
+      final nutrient = _availableNutrients[_rand.nextInt(_availableNutrients.length)];
+      nutritionList.add(
+        FoodNutrition(
+          name: nutrient,
+          amount: _rand.nextInt(100).toDouble(),  // you can change the range as you want
+          quantityPrefix: _quantityPrefixes[_rand.nextInt(_quantityPrefixes.length)],
+        ),
+      );
+      _availableNutrients.remove(nutrient); // Avoid duplicate nutrients
+    }
+
+    return nutritionList;
   }
 }
